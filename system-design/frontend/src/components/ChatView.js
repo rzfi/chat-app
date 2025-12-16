@@ -35,9 +35,13 @@ const ChatView = () => {
     socket.on('receiveMessage', (message) => {
       setMessages((prev) => [...prev, message]);
     });
+    socket.on('chatCleared', () => {
+      setMessages([]);
+    });
     return () => {
       socket.off('connect', handleConnect);
       socket.off('receiveMessage');
+      socket.off('chatCleared');
     };
   }, [user.id]);
 
@@ -60,9 +64,23 @@ const ChatView = () => {
     }
   };
 
+  const clearChat = async () => {
+    try {
+      await axios.delete(`${API_URL}/messages/clear`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      socket.emit('chatCleared');
+    } catch (error) {
+      console.error('Failed to clear chat');
+    }
+  };
+
   return (
     <div className="chat-view">
-      <h2>Group Chat</h2>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <h2>Group Chat</h2>
+        <button onClick={clearChat} style={{color: 'red', padding: '5px 10px'}}>Clear Chat</button>
+      </div>
       <div className="messages">
         {messages.map((msg, index) => (
           <div key={index} className={`message ${msg.sender._id === user.id ? 'sent' : 'received'}`}>

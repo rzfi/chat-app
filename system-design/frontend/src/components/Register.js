@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const Register = ({ onRegister }) => {
+const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -9,9 +9,9 @@ const Register = ({ onRegister }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://192.168.1.35:5000/api/auth/register', { username, email, password });
+      await axios.post(`${process.env.REACT_APP_SERVER_URL || 'http://localhost:5000'}/api/auth/register`, { username, email, password });
       alert('Registered successfully');
-      onRegister();
+      // Registration successful
     } catch (error) {
       alert('Registration failed');
     }

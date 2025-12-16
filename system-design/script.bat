@@ -1,19 +1,27 @@
 @echo off
-echo Starting Chat Application...
+echo ========================================
+echo      SIMPLE CHAT APPLICATION
+echo ========================================
 echo.
-
-echo 1. Starting MongoDB (make sure MongoDB is installed and running)
-echo 2. Starting Backend Server...
+echo Make sure MongoDB is running on localhost:27017
+echo.
+echo Starting Backend Server...
 start "Backend Server" cmd /k "cd backend && npm start"
 
+echo Waiting 3 seconds...
 timeout /t 3 /nobreak > nul
 
-echo 3. Starting Frontend...
+echo Starting Frontend...
 start "Frontend" cmd /k "cd frontend && npm start"
 
 echo.
-echo Both servers are starting...
-echo Backend: http://localhost:5000
+echo ========================================
+echo Application URLs:
+echo Backend API: http://localhost:5000
 echo Frontend: http://localhost:3000
+echo Network: http://192.168.112.110:3000
+echo ========================================
+echo.
+echo Share the network URL with others to join!
 echo.
 pause

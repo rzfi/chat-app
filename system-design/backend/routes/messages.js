@@ -28,4 +28,13 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
+router.delete('/clear', auth, async (req, res) => {
+  try {
+    await Message.deleteMany({});
+    res.json({ message: 'All messages deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

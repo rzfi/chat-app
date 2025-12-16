@@ -24,6 +24,7 @@ export const authAPI = {
 export const messageAPI = {
   getMessages: () => api.get('/messages'),
   sendMessage: (content) => api.post('/messages', { content }),
+  clearMessages: () => api.delete('/messages/clear'),
 };
 
 export default api;
