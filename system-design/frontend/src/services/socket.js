@@ -6,7 +6,8 @@ class SocketService {
   }
 
   connect() {
-    this.socket = io('http://192.168.1.35:5000');
+    const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
+    this.socket = io(serverUrl);
     return this.socket;
   }
 
@@ -14,30 +15,6 @@ class SocketService {
     if (this.socket) {
       this.socket.disconnect();
       this.socket = null;
-    }
-  }
-
-  joinRoom(userId) {
-    if (this.socket) {
-      this.socket.emit('join', userId);
-    }
-  }
-
-  sendMessage(messageData) {
-    if (this.socket) {
-      this.socket.emit('sendMessage', messageData);
-    }
-  }
-
-  onMessage(callback) {
-    if (this.socket) {
-      this.socket.on('receiveMessage', callback);
-    }
-  }
-
-  offMessage() {
-    if (this.socket) {
-      this.socket.off('receiveMessage');
     }
   }
 }

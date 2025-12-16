@@ -1,12 +1,9 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
 const socketIo = require('socket.io');
+const mongoose = require('mongoose');
 require('dotenv').config();
-
-const authRoutes = require('./routes/auth');
-const messageRoutes = require('./routes/messages');
 
 const app = express();
 const server = http.createServer(app);
@@ -20,41 +17,41 @@ const io = socketIo(server, {
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/whatsapp');
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
-app.use('/api/auth', authRoutes);
-app.use('/api/messages', messageRoutes);
+// Routes
+app.use('/api/auth', require('./routes/auth'));
 
 const users = {};
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  socket.on('join', (userId) => {
-    users[userId] = socket.id;
+  socket.on('join', (username) => {
+    users[socket.id] = username;
+    socket.broadcast.emit('userJoined', username);
   });
 
-  socket.on('sendMessage', async (data) => {
-    const { senderId, content } = data;
-    const User = require('./models/User');
-    const sender = await User.findById(senderId).select('username');
-    const message = { sender: { _id: senderId, username: sender.username }, content, timestamp: new Date() };
+  socket.on('sendMessage', (data) => {
+    const { username, content } = data;
+    const message = { username, content, timestamp: new Date() };
     io.emit('receiveMessage', message);
   });
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
-    for (let userId in users) {
-      if (users[userId] === socket.id) {
-        delete users[userId];
-        break;
-      }
+    const username = users[socket.id];
+    if (username) {
+      socket.broadcast.emit('userLeft', username);
+      delete users[socket.id];
     }
   });
 });
 
-const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || '0.0.0.0';
-server.listen(PORT, HOST, () => {
-  console.log(`Server running on ${HOST}:${PORT}`);
+const PORT = 5000;
+server.listen(PORT, () => {
+  console.log(`Server running on localhost:${PORT}`);
 });
