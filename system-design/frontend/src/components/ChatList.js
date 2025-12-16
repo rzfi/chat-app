@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
+import { SERVER_URL, API_URL } from '../config/network';
 
-const socket = io('http://localhost:5000');
+const socket = io(SERVER_URL);
 
 const ChatList = () => {
   const [users, setUsers] = useState([]);
@@ -12,7 +13,7 @@ const ChatList = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/auth/users', {
+        const res = await axios.get(`${API_URL}/auth/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUsers(res.data);

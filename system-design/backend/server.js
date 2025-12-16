@@ -52,6 +52,8 @@ io.on('connection', (socket) => {
 });
 
 const PORT = 5000;
-server.listen(PORT, () => {
-  console.log(`Server running on localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on all interfaces at port ${PORT}`);
+  console.log(`Local: http://localhost:${PORT}`);
+  console.log(`Network: http://192.168.112.110:${PORT}`);
 });

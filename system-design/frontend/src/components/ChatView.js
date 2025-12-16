@@ -2,8 +2,9 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
+import { SERVER_URL, API_URL } from '../config/network';
 
-const socket = io('http://192.168.1.35:5000');
+const socket = io(SERVER_URL);
 
 const ChatView = () => {
   const [messages, setMessages] = useState([]);
@@ -12,7 +13,7 @@ const ChatView = () => {
 
   const fetchMessages = useCallback(async () => {
     try {
-      const res = await axios.get(`http://192.168.1.35:5000/api/messages`, {
+      const res = await axios.get(`${API_URL}/messages`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessages(res.data);
@@ -43,7 +44,7 @@ const ChatView = () => {
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
     try {
-      await axios.post('http://192.168.1.35:5000/api/messages', {
+      await axios.post(`${API_URL}/messages`, {
         content: newMessage,
       }, {
         headers: { Authorization: `Bearer ${token}` },

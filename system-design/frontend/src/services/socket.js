@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import { SERVER_URL } from '../config/network';
 
 class SocketService {
   constructor() {
@@ -6,8 +7,7 @@ class SocketService {
   }
 
   connect() {
-    const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
-    this.socket = io(serverUrl);
+    this.socket = io(SERVER_URL);
     return this.socket;
   }
 
